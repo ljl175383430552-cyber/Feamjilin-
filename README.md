@@ -1,20 +1,45 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# 云同步提词器
 
-# Run and deploy your AI Studio app
+一个纯浏览器端使用的提词器网页工具，专为拍摄现场设计：
 
-This contains everything you need to run your app locally.
+- **文稿管理**：多篇文稿本地保存（localStorage），支持导入 `.txt` / `.md`，自动统计字数与预计朗读时长
+- **平滑滚动播放**：`requestAnimationFrame` 驱动，实时变速、点击段落跳转、播放前倒计时
+- **显示定制**：字号 / 行距 / 边距 / 三套配色主题、焦点参考线、水平 / 垂直镜像（配合分光镜提词器硬件）、全屏
+- **快捷键**：空格 播放/暂停 · ↑↓ 调速 · ←→ 快退/快进 · R 回开头 · F 全屏 · M 镜像
+- **云端共享房间**：编辑端创建房间生成链接和二维码，现场任何设备打开即进入观看模式；本地改稿点「同步」，所有设备通过 SSE 实时收到新内容，无需来回拷贝粘贴
+- **现场容错**：观看端断线自动重连并拉取最新版本；本地缓存最近内容，完全断网也能继续滚动播放；播放中收到更新不打断朗读，可选择「立即应用」或暂停后自动应用
 
-View your app in AI Studio: https://ai.studio/apps/9192dd79-f699-4124-bdf8-c5c2da7ac6d1
+## 本地开发
 
-## Run Locally
+需要 Node.js 18+。
 
-**Prerequisites:**  Node.js
+```bash
+npm install
 
+# 终端 1：启动同步后端（端口 8787）
+npm run dev:server
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+# 终端 2：启动前端（端口 3000，/api 自动代理到后端）
+npm run dev
+```
+
+打开 http://localhost:3000 即可使用。
+
+## 生产部署
+
+```bash
+npm install
+npm run build   # 构建前端到 dist/
+npm start       # 单进程同时托管前端静态文件和同步 API（默认端口 8787）
+```
+
+房间数据保存在 `data/rooms.json`（可用环境变量 `DATA_DIR` 自定义目录），服务重启后房间不丢失。
+
+现场没有外网时，也可以在一台笔记本上跑 `npm start`，所有设备连同一个 WiFi，用笔记本的局域网 IP 访问即可。
+
+## 多端同步原理
+
+- `POST /api/rooms` 创建房间，返回房间号和编辑密钥（密钥只在编辑端本机保存）
+- `PUT /api/rooms/:id` 编辑端推送新内容（需携带编辑密钥），版本号递增
+- `GET /api/rooms/:id/events` 观看端 SSE 长连接，实时接收内容更新与在线设备数
+- `GET /api/rooms/:id` 观看端进入 / 断线重连时拉取当前快照

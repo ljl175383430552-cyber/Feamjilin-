@@ -1,6 +1,6 @@
 {
-  "name": "ChromaScreen Mobile",
-  "description": "A professional true full-screen green, blue, and white screen tool for mobile chroma keying and screen testing, featuring a touch-lock mode and notched display support.",
+  "name": "云同步提词器",
+  "description": "多端实时同步的网页提词器：文稿本地保存，平滑滚动、镜像翻转、焦点参考线，并支持创建共享房间，本地改稿一键同步到现场所有打开链接的设备。",
   "requestFramePermissions": [],
   "majorCapabilities": []
 }
