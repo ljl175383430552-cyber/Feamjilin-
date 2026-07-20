@@ -10,15 +10,10 @@ import android.content.Intent
 import android.graphics.PixelFormat
 import android.os.Build
 import android.os.CountDownTimer
-import android.os.Handler
 import android.os.IBinder
-import android.os.Looper
-import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
-import android.widget.ProgressBar
-import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
@@ -26,9 +21,9 @@ import androidx.core.app.ServiceCompat
 enum class LockState { IDLE, COUNTDOWN, LOCKED }
 
 /**
- * 前台服务：负责 30 秒倒计时，然后在所有应用上层加一层
- * 全屏透明的触摸拦截悬浮窗（防误触）。底下的界面照常显示、
- * 照常播放，但点击 / 滑动全部被拦截，长按屏幕 5 秒解锁。
+ * 前台服务：负责 30 秒倒计时，然后在所有应用上层加一个
+ * 完全隐形的全屏悬浮 View（无任何可见元素）。锁定后屏幕
+ * 显示的就是当前画面本身，只是触摸无效；长按屏幕 5 秒解锁。
  */
 class LockService : Service() {
 
@@ -40,22 +35,14 @@ class LockService : Service() {
         private const val NOTIFICATION_ID = 1
         private const val COUNTDOWN_MS = 30_000L
         private const val UNLOCK_HOLD_MS = 5_000L
-        private const val HINT_AUTO_HIDE_MS = 4_000L
 
         @Volatile var state = LockState.IDLE
         @Volatile var remainingSeconds = 0
     }
 
-    private val handler = Handler(Looper.getMainLooper())
     private var countdownTimer: CountDownTimer? = null
     private var unlockTimer: CountDownTimer? = null
     private var overlayView: View? = null
-    private var unlockProgress: ProgressBar? = null
-    private var unlockHint: TextView? = null
-
-    private val hideHintRunnable = Runnable {
-        unlockHint?.visibility = View.INVISIBLE
-    }
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -85,21 +72,21 @@ class LockService : Service() {
 
             override fun onFinish() {
                 remainingSeconds = 0
-                showOverlay()
+                lock()
             }
         }.start()
     }
 
-    @SuppressLint("ClickableViewAccessibility", "InflateParams")
-    private fun showOverlay() {
+    /**
+     * 锁定：加一个完全隐形的全屏 View。屏幕上看不到任何东西，
+     * 当前画面原样显示，但所有点击 / 滑动都不再生效。
+     * 唯一识别的手势是"按住不放 5 秒"，用于解开锁定。
+     */
+    @SuppressLint("ClickableViewAccessibility")
+    private fun lock() {
         if (overlayView != null) return
 
-        val view = LayoutInflater.from(this).inflate(R.layout.overlay_lock, null)
-        unlockProgress = view.findViewById(R.id.unlockProgress)
-        unlockHint = view.findViewById(R.id.unlockHint)
-
-        // 拦截并消费所有触摸事件：底下的应用收不到任何点击 / 滑动。
-        // 唯一识别的手势是"按住不放 5 秒"用于解锁。
+        val view = View(this)
         view.setOnTouchListener { _, event ->
             when (event.actionMasked) {
                 MotionEvent.ACTION_DOWN -> startUnlockHold()
@@ -125,7 +112,7 @@ class LockService : Service() {
                 WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or
                 WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS or
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
-            PixelFormat.TRANSLUCENT
+            PixelFormat.TRANSPARENT
         )
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             params.layoutInDisplayCutoutMode =
@@ -135,24 +122,13 @@ class LockService : Service() {
         windowManager().addView(view, params)
         overlayView = view
         state = LockState.LOCKED
-
         updateNotification(getString(R.string.notif_locked))
-        Toast.makeText(this, R.string.locked_toast, Toast.LENGTH_LONG).show()
-        // 提示文字几秒后自动隐藏，不遮挡底下的画面
-        handler.postDelayed(hideHintRunnable, HINT_AUTO_HIDE_MS)
     }
 
     private fun startUnlockHold() {
-        handler.removeCallbacks(hideHintRunnable)
-        unlockHint?.visibility = View.VISIBLE
-        unlockHint?.setText(R.string.unlocking)
-        unlockProgress?.visibility = View.VISIBLE
-
         unlockTimer?.cancel()
-        unlockTimer = object : CountDownTimer(UNLOCK_HOLD_MS, 50L) {
-            override fun onTick(millisUntilFinished: Long) {
-                unlockProgress?.progress = (UNLOCK_HOLD_MS - millisUntilFinished).toInt()
-            }
+        unlockTimer = object : CountDownTimer(UNLOCK_HOLD_MS, UNLOCK_HOLD_MS) {
+            override fun onTick(millisUntilFinished: Long) = Unit
 
             override fun onFinish() {
                 shutdown(showUnlockedToast = true)
@@ -163,10 +139,6 @@ class LockService : Service() {
     private fun cancelUnlockHold() {
         unlockTimer?.cancel()
         unlockTimer = null
-        unlockProgress?.progress = 0
-        unlockProgress?.visibility = View.INVISIBLE
-        unlockHint?.setText(R.string.unlock_hint)
-        handler.postDelayed(hideHintRunnable, HINT_AUTO_HIDE_MS)
     }
 
     private fun shutdown(showUnlockedToast: Boolean) {
@@ -174,12 +146,9 @@ class LockService : Service() {
         countdownTimer = null
         unlockTimer?.cancel()
         unlockTimer = null
-        handler.removeCallbacks(hideHintRunnable)
 
         overlayView?.let { windowManager().removeView(it) }
         overlayView = null
-        unlockProgress = null
-        unlockHint = null
 
         if (showUnlockedToast) {
             Toast.makeText(this, R.string.unlocked_toast, Toast.LENGTH_SHORT).show()
@@ -230,7 +199,6 @@ class LockService : Service() {
         super.onDestroy()
         countdownTimer?.cancel()
         unlockTimer?.cancel()
-        handler.removeCallbacks(hideHintRunnable)
         overlayView?.let { windowManager().removeView(it) }
         overlayView = null
         state = LockState.IDLE

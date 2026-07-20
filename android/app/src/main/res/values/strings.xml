@@ -13,9 +13,6 @@
     <string name="stop_lock">解除锁定</string>
     <string name="locked_label">已锁定</string>
 
-    <string name="unlock_hint">已锁定 · 长按屏幕 5 秒解锁</string>
-    <string name="unlocking">解锁中…</string>
-    <string name="locked_toast">已开启防误触锁定：画面保持显示，长按屏幕 5 秒解锁</string>
     <string name="unlocked_toast">已解锁</string>
 
     <string name="notif_channel_name">防误触锁定</string>
