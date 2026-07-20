@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background">
+
+    <!-- 倒计时页面 -->
+    <LinearLayout
+        android:id="@+id/countdownScreen"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="32dp">
+
+        <TextView
+            android:id="@+id/countdownText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="30"
+            android:textSize="96sp"
+            android:textStyle="bold"
+            android:textColor="@color/primary"
+            android:fontFamily="sans-serif-light" />
+
+        <TextView
+            android:id="@+id/countdownHint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/countdown_hint"
+            android:textSize="16sp"
+            android:textColor="@color/text_secondary" />
+
+        <EditText
+            android:id="@+id/contentInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="48dp"
+            android:hint="@string/content_hint"
+            android:textColor="@color/text_primary"
+            android:textColorHint="@color/text_secondary"
+            android:textSize="18sp"
+            android:gravity="top|start"
+            android:minLines="3"
+            android:maxLines="6"
+            android:padding="16dp"
+            android:background="@drawable/bg_input"
+            android:inputType="textMultiLine" />
+
+        <Button
+            android:id="@+id/restartButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="重新开始倒计时"
+            android:textColor="@color/background"
+            android:backgroundTint="@color/primary"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <!-- 锁定页面（覆盖全屏，拦截所有触摸） -->
+    <FrameLayout
+        android:id="@+id/lockScreen"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/lock_background"
+        android:visibility="gone"
+        android:clickable="true"
+        android:focusable="true">
+
+        <TextView
+            android:id="@+id/lockContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:padding="32dp"
+            android:text="@string/default_lock_content"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_primary" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginBottom="64dp"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <ProgressBar
+                android:id="@+id/unlockProgress"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="200dp"
+                android:layout_height="8dp"
+                android:max="5000"
+                android:progress="0"
+                android:progressTint="@color/primary"
+                android:progressBackgroundTint="@color/surface"
+                android:visibility="invisible" />
+
+            <TextView
+                android:id="@+id/unlockHint"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/unlock_hint"
+                android:textSize="14sp"
+                android:textColor="@color/text_secondary" />
+        </LinearLayout>
+    </FrameLayout>
+
+</FrameLayout>

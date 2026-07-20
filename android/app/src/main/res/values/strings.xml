@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Clock</string>
+    <string name="countdown_hint">倒计时结束后将锁定屏幕</string>
+    <string name="content_hint">在这里输入锁定后要显示的内容…</string>
+    <string name="default_lock_content">屏幕已锁定</string>
+    <string name="unlock_hint">长按屏幕 5 秒解锁</string>
+    <string name="unlocking">解锁中…</string>
+    <string name="unlocked_toast">已解锁</string>
+    <string name="locked_toast">屏幕已锁定，长按 5 秒解锁</string>
+</resources>
