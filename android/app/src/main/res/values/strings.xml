@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Clock</string>
+    <string name="app_name">屏幕锁</string>
 
     <string name="hint_need_permission">需要「悬浮窗」（在其他应用上层显示）权限，才能在任意界面上锁定触摸防误触</string>
     <string name="hint_idle">点击下方按钮开始 30 秒倒计时</string>

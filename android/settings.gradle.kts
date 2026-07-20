@@ -14,5 +14,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Clock"
+rootProject.name = "屏幕锁"
 include(":app")
