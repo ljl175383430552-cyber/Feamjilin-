@@ -1,0 +1,2 @@
+-dontwarn org.jetbrains.annotations.**
+-keepclassmembers class androidx.compose.runtime.** { *; }

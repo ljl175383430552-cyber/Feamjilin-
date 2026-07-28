@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- API 23~25 的回退图标：矢量绘制，无需为各 dpi 生成位图 -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#00B140"
+        android:pathData="M8,8h92a0,0 0 0 1 0,0v92a0,0 0 0 1 0,0H8a0,0 0 0 1 0,0V8a0,0 0 0 1 0,0z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,54m-26,0a26,26 0 1,0 52,0a26,26 0 1,0 -52,0" />
+    <path
+        android:fillColor="#111111"
+        android:pathData="M54,54 L28,54 A26,26 0 0 1 54,28 Z" />
+    <path
+        android:fillColor="#111111"
+        android:pathData="M54,54 L80,54 A26,26 0 0 1 54,80 Z" />
+</vector>

@@ -13,7 +13,8 @@ import {
   Move,
   Maximize2,
   RotateCcw,
-  Share
+  Share,
+  Watch
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -446,6 +447,17 @@ export default function App() {
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-white/60 hover:text-white hover:bg-white/10"
+                      title="手表接入（扫码 / 短链）"
+                      onClick={() => {
+                        window.location.href = '/join';
+                      }}
+                    >
+                      <Watch className="w-4 h-4" />
+                    </Button>
                     <Button 
                       variant="ghost" 
                       size="icon" 

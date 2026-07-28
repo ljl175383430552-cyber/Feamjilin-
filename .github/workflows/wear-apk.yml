@@ -1,0 +1,61 @@
+name: Wear APK
+
+on:
+  push:
+    branches: [main, "cursor/**"]
+    paths:
+      - "wear/**"
+      - ".github/workflows/wear-apk.yml"
+  pull_request:
+    paths:
+      - "wear/**"
+      - ".github/workflows/wear-apk.yml"
+  release:
+    types: [published]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: wear
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Unit tests
+        run: ./gradlew :app:testUniversalDebugUnitTest --stacktrace
+
+      - name: Assemble release APKs
+        run: ./gradlew assembleUniversalRelease assemblePlaywearRelease --stacktrace
+
+      - name: Upload universal APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: chromawatch-universal-release
+          path: wear/app/build/outputs/apk/universal/release/app-universal-release.apk
+
+      - name: Upload playwear APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: chromawatch-playwear-release
+          path: wear/app/build/outputs/apk/playwear/release/app-playwear-release.apk
+
+      - name: Attach APKs to GitHub Release
+        if: github.event_name == 'release'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            wear/app/build/outputs/apk/universal/release/app-universal-release.apk
+            wear/app/build/outputs/apk/playwear/release/app-playwear-release.apk

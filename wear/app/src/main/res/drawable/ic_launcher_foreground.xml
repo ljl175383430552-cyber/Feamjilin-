@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- 白底圆盘 -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,54m-26,0a26,26 0 1,0 52,0a26,26 0 1,0 -52,0" />
+    <!-- 左上黑格 -->
+    <path
+        android:fillColor="#111111"
+        android:pathData="M54,54 L28,54 A26,26 0 0 1 54,28 Z" />
+    <!-- 右下黑格 -->
+    <path
+        android:fillColor="#111111"
+        android:pathData="M54,54 L80,54 A26,26 0 0 1 54,80 Z" />
+    <!-- 中心精度点 -->
+    <path
+        android:fillColor="#9E9E9E"
+        android:pathData="M54,54m-2.4,0a2.4,2.4 0 1,0 4.8,0a2.4,2.4 0 1,0 -4.8,0" />
+</vector>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!--
+      watchFeatureRequired 由 productFlavor 注入：
+        universal 风味 = false  → 任意安卓设备均可安装（国产 AOSP 手表、手机、平板）
+        playwear  风味 = true   → Google Play 以 Wear OS 表单形态分发时必须为 true
+    -->
+    <uses-feature
+        android:name="android.hardware.type.watch"
+        android:required="${watchFeatureRequired}" />
+
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+    <supports-screens
+        android:anyDensity="true"
+        android:largeScreens="true"
+        android:normalScreens="true"
+        android:smallScreens="true" />
+
+    <application
+        android:allowBackup="true"
+        android:hardwareAccelerated="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.ChromaWatch"
+        tools:targetApi="23">
+
+        <!-- 独立运行，不依赖配对手机上的伴侣 App -->
+        <meta-data
+            android:name="com.google.android.wearable.standalone"
+            android:value="true" />
+
+        <activity
+            android:name=".MainActivity"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden|uiMode|density|fontScale"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:screenOrientation="nosensor"
+            android:taskAffinity=""
+            android:theme="@style/Theme.ChromaWatch"
+            tools:ignore="DiscouragedApi,LockedOrientationActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>
