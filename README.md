@@ -19,6 +19,21 @@
 2. （可选）设置 `.env.local` 中的 `GEMINI_API_KEY`
 3. `npm run dev`
 
+**手表快速接入（扫码 / 短链）：**
+
+| 地址 | 作用 |
+|------|------|
+| `/join` | 手机接入页：二维码 + APK 引导 |
+| `/w` | 手表网页版绿幕（浏览器即用，零安装） |
+
+剧组离线时：
+
+```bash
+# 可选：先编好手表 APK，field 会自动挂到 /apk/chromawatch.apk
+cd wear && ./gradlew assembleUniversalRelease && cd ..
+npm run field   # 终端打印局域网二维码，手机扫码即可
+```
+
 View in AI Studio: https://ai.studio/apps/9192dd79-f699-4124-bdf8-c5c2da7ac6d1
 
 ---
