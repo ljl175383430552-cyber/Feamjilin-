@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">腕上绿幕</string>
+
+    <string name="panel_color">色幕</string>
+    <string name="panel_marker">跟踪点</string>
+    <string name="panel_size">点位大小</string>
+    <string name="panel_count">点位数量</string>
+    <string name="panel_style">点位样式</string>
+    <string name="panel_brightness">屏幕亮度</string>
+    <string name="panel_lock">锁定屏幕</string>
+    <string name="panel_reset">恢复默认</string>
+    <string name="panel_center">跟踪点居中</string>
+
+    <string name="marker_off">关闭</string>
+    <string name="style_checker">棋盘</string>
+    <string name="style_bullseye">同心环</string>
+    <string name="style_cross">十字</string>
+    <string name="style_dot">实心点</string>
+
+    <string name="color_green_digital">数字绿</string>
+    <string name="color_green_chroma">影视绿</string>
+    <string name="color_blue_digital">数字蓝</string>
+    <string name="color_blue_chroma">影视蓝</string>
+    <string name="color_red">纯红</string>
+    <string name="color_white">纯白</string>
+    <string name="color_black">纯黑</string>
+    <string name="color_magenta">品红</string>
+
+    <string name="hint_locked">已锁定 · 长按 3 秒解锁</string>
+    <string name="hint_unlocking">解锁中…</string>
+    <string name="hint_tap_to_open">轻点屏幕唤出菜单</string>
+</resources>

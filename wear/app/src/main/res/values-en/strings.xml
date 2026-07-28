@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ChromaWatch</string>
+
+    <string name="panel_color">Screen color</string>
+    <string name="panel_marker">Tracking marker</string>
+    <string name="panel_size">Marker size</string>
+    <string name="panel_count">Marker count</string>
+    <string name="panel_style">Marker style</string>
+    <string name="panel_brightness">Brightness</string>
+    <string name="panel_lock">Lock screen</string>
+    <string name="panel_reset">Reset</string>
+    <string name="panel_center">Re-center markers</string>
+
+    <string name="marker_off">Off</string>
+    <string name="style_checker">Checker</string>
+    <string name="style_bullseye">Bullseye</string>
+    <string name="style_cross">Cross</string>
+    <string name="style_dot">Dot</string>
+
+    <string name="color_green_digital">Digital green</string>
+    <string name="color_green_chroma">Chroma green</string>
+    <string name="color_blue_digital">Digital blue</string>
+    <string name="color_blue_chroma">Chroma blue</string>
+    <string name="color_red">Red</string>
+    <string name="color_white">White</string>
+    <string name="color_black">Black</string>
+    <string name="color_magenta">Magenta</string>
+
+    <string name="hint_locked">Locked · hold 3s to unlock</string>
+    <string name="hint_unlocking">Unlocking…</string>
+    <string name="hint_tap_to_open">Tap to open menu</string>
+</resources>
