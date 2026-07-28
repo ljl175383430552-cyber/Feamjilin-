@@ -1,7 +1,10 @@
 package com.chromascreen.wear.ui.components
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.awaitTouchSlopOrCancellation
+import androidx.compose.foundation.gestures.drag
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,6 +20,7 @@ import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -35,6 +39,7 @@ fun TrackingMarkerLayer(
     dragEnabled: Boolean,
     showDragHint: Boolean,
     onDrag: (dxFraction: Float, dyFraction: Float) -> Unit,
+    onTap: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     if (settings.markerCount == 0) return
@@ -64,9 +69,23 @@ fun TrackingMarkerLayer(
                     .then(
                         if (draggable) {
                             Modifier.pointerInput(widthPx, heightPx) {
-                                detectDragGestures { change, dragAmount ->
-                                    change.consume()
-                                    onDrag(dragAmount.x / widthPx, dragAmount.y / heightPx)
+                                // 中心热区必须同时认“拖动”和“轻点”：屏幕正中是最顺手的点击位置，
+                                // 若只挂拖动手势，用户点中央唤不出菜单。
+                                awaitEachGesture {
+                                    val down = awaitFirstDown(requireUnconsumed = false)
+                                    val slopChange = awaitTouchSlopOrCancellation(down.id) { change, over ->
+                                        change.consume()
+                                        onDrag(over.x / widthPx, over.y / heightPx)
+                                    }
+                                    if (slopChange != null) {
+                                        drag(down.id) { change ->
+                                            change.consume()
+                                            val delta = change.positionChange()
+                                            onDrag(delta.x / widthPx, delta.y / heightPx)
+                                        }
+                                    } else {
+                                        onTap()
+                                    }
                                 }
                             }
                         } else {

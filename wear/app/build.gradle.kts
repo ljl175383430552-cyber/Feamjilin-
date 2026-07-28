@@ -59,6 +59,12 @@ android {
         compose = true
     }
 
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
+
     packaging {
         resources.excludes += setOf(
             "/META-INF/{AL2.0,LGPL2.1}",
@@ -79,4 +85,14 @@ dependencies {
     implementation(libs.androidx.compose.ui)
     debugImplementation(libs.androidx.compose.ui.tooling)
     implementation(libs.androidx.compose.ui.tooling.preview)
+
+    // 没有 KVM 的 CI 机器上也能跑：Robolectric 在 JVM 里直接驱动 Compose
+    testImplementation(libs.junit)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.androidx.test.core)
+    testImplementation(platform(libs.androidx.compose.bom))
+    testImplementation(libs.androidx.compose.ui.test.junit4)
+    // 必须走 debugImplementation：Robolectric 读的是 app 合并后的 manifest，
+    // 只有这样才能解析到 ui-test-manifest 里的 ComponentActivity
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
 }

@@ -116,6 +116,7 @@ fun ChromaApp(controller: ChromaController, haptics: Haptics) {
             dragEnabled = !locked && !panelVisible,
             showDragHint = dragHintVisible,
             onDrag = controller::nudge,
+            onTap = controller::showPanel,
         )
 
         if (sizeHudVisible && !panelVisible && !locked) {
