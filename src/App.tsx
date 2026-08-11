@@ -21,7 +21,6 @@ import { useVault } from '@/src/hooks/useVault';
 import { exportVaultJson, importVaultJson } from '@/src/lib/storage';
 import { cn } from '@/src/lib/utils';
 import type { AiProviderId, KeyEntry } from '@/src/types';
-import { Button } from '@/components/ui/button';
 
 function uid() {
   return crypto.randomUUID();
@@ -130,8 +129,8 @@ export default function App() {
 
   if (vault.mode === 'booting') {
     return (
-      <div className="app-shell grid min-h-dvh place-items-center">
-        <p className="font-mono text-sm text-[var(--ink-soft)]">载入保险库…</p>
+      <div className="grid min-h-dvh place-items-center bg-[var(--neu-bg)]">
+        <p className="text-sm text-[var(--neu-muted)]">载入保险库…</p>
       </div>
     );
   }
@@ -154,33 +153,46 @@ export default function App() {
   }
 
   return (
-    <div className="app-shell min-h-dvh text-[var(--ink)]">
-      <div className="mx-auto flex min-h-dvh max-w-6xl flex-col px-4 py-6 md:px-8 md:py-10">
-        <header className="mb-8 flex flex-col gap-6 md:mb-10 md:flex-row md:items-end md:justify-between">
+    <div className="relative min-h-dvh overflow-x-hidden bg-[var(--neu-bg)] text-[var(--neu-fg)]">
+      <DecorBackdrop />
+
+      <div className="relative z-10 mx-auto flex min-h-dvh max-w-7xl flex-col px-4 py-8 md:px-8 md:py-12">
+        <header className="mb-8 flex flex-col gap-6 md:mb-12 md:flex-row md:items-end md:justify-between">
           <motion.div
-            initial={{ opacity: 0, y: 12 }}
+            initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.45 }}
+            transition={{ duration: 0.45, ease: 'easeOut' }}
+            className="flex items-start gap-4"
           >
-            <p className="font-display text-4xl tracking-tight md:text-5xl">KeyLedger</p>
-            <p className="mt-2 max-w-md text-sm leading-relaxed text-[var(--ink-soft)]">
-              本地记录各 AI 工具的 API Key 与配置格式。数据只存在浏览器，可选用主密码加密。
-            </p>
+            <div className="neu-well neu-float grid size-16 shrink-0 place-items-center rounded-[20px]">
+              <div className="neu-extruded-sm grid size-10 place-items-center rounded-xl bg-[var(--neu-bg)] text-[var(--neu-accent)]">
+                <KeyRound className="size-5" />
+              </div>
+            </div>
+            <div>
+              <h1 className="font-display text-4xl font-extrabold tracking-tight md:text-5xl">
+                KeyLedger
+              </h1>
+              <p className="mt-2 max-w-md text-sm leading-relaxed text-[var(--neu-muted)] md:text-base">
+                本地记录各 AI 工具的 API Key 与配置格式。数据只存在浏览器，可选用主密码加密。
+              </p>
+            </div>
           </motion.div>
+
           <motion.div
-            className="flex flex-wrap items-center gap-2"
-            initial={{ opacity: 0, y: 8 }}
+            className="flex flex-wrap items-center gap-3"
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1, duration: 0.4 }}
+            transition={{ delay: 0.08, duration: 0.4 }}
           >
-            <Button onClick={() => openCreate()} className="h-10 gap-2 px-4">
+            <button type="button" className="neu-btn neu-btn-primary" onClick={() => openCreate()}>
               <Plus className="size-4" />
               新建记录
-            </Button>
-            <Button variant="outline" className="h-10 gap-2 px-3" onClick={onExport}>
+            </button>
+            <button type="button" className="neu-btn" onClick={onExport}>
               <Download className="size-4" />
               导出
-            </Button>
+            </button>
             <label className="inline-flex">
               <input
                 type="file"
@@ -192,34 +204,34 @@ export default function App() {
                   e.target.value = '';
                 }}
               />
-              <span className="inline-flex h-10 cursor-pointer items-center gap-2 rounded-lg border border-[var(--line)] bg-[var(--panel)] px-3 text-sm hover:bg-[var(--panel-strong)]">
+              <span className="neu-btn cursor-pointer">
                 <Upload className="size-4" />
                 导入
               </span>
             </label>
             {vault.encrypted && (
-              <Button variant="ghost" className="h-10 gap-2 px-3" onClick={vault.lock}>
+              <button type="button" className="neu-btn" onClick={vault.lock}>
                 <Lock className="size-4" />
                 锁定
-              </Button>
+              </button>
             )}
           </motion.div>
         </header>
 
         <div className="mb-5 flex flex-col gap-3 md:flex-row md:items-center">
           <div className="relative flex-1">
-            <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-[var(--ink-soft)]" />
+            <Search className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-[var(--neu-muted)]" />
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="搜索标题、标签、备注或密钥片段"
-              className="field w-full pl-10"
+              className="neu-field w-full pl-11"
             />
           </div>
           <select
             value={providerFilter}
             onChange={(e) => setProviderFilter(e.target.value as AiProviderId | 'all')}
-            className="field md:w-48"
+            className="neu-field md:w-52"
           >
             <option value="all">全部提供商</option>
             {PROVIDER_PRESETS.map((p) => (
@@ -230,30 +242,32 @@ export default function App() {
           </select>
         </div>
 
-        <div className="mb-6 flex gap-2 overflow-x-auto pb-1">
+        <div className="mb-8 flex gap-2 overflow-x-auto pb-1">
           {PROVIDER_PRESETS.map((p, i) => (
             <motion.button
               key={p.id}
               type="button"
-              initial={{ opacity: 0, y: 6 }}
+              initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.03 * i }}
+              transition={{ delay: 0.03 * i, duration: 0.3 }}
               onClick={() => openCreate(p.id)}
-              className="shrink-0 rounded-full border border-[var(--line)] bg-[var(--panel)] px-3 py-1.5 text-xs text-[var(--ink-soft)] transition hover:border-[var(--accent)] hover:text-[var(--ink)]"
+              className="neu-chip shrink-0"
             >
               + {p.name}
             </motion.button>
           ))}
         </div>
 
-        <div className="grid flex-1 gap-5 lg:grid-cols-[1.1fr_0.9fr]">
-          <section className="space-y-3">
+        <div className="grid flex-1 gap-6 lg:grid-cols-[1.05fr_0.95fr]">
+          <section className="space-y-4">
             {filtered.length === 0 ? (
-              <div className="panel grid min-h-64 place-items-center p-8 text-center">
+              <div className="neu-card grid min-h-72 place-items-center p-8 text-center md:p-12">
                 <div>
-                  <KeyRound className="mx-auto mb-3 size-8 text-[var(--accent)]" />
-                  <p className="font-display text-xl">还没有密钥记录</p>
-                  <p className="mt-2 text-sm text-[var(--ink-soft)]">
+                  <div className="neu-well mx-auto mb-5 grid size-16 place-items-center">
+                    <KeyRound className="size-7 text-[var(--neu-accent)]" />
+                  </div>
+                  <p className="font-display text-2xl font-bold tracking-tight">还没有密钥记录</p>
+                  <p className="mt-2 text-sm text-[var(--neu-muted)]">
                     从上方提供商快捷入口开始，或点击「新建记录」。
                   </p>
                 </div>
@@ -266,32 +280,39 @@ export default function App() {
                   <motion.button
                     key={entry.id}
                     type="button"
-                    initial={{ opacity: 0, y: 8 }}
+                    initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: Math.min(i * 0.04, 0.24) }}
+                    transition={{ delay: Math.min(i * 0.04, 0.24), duration: 0.3 }}
                     onClick={() => setSelectedId(entry.id)}
                     className={cn(
-                      'panel w-full p-4 text-left transition',
-                      active && 'ring-2 ring-[var(--accent)]',
+                      'neu-card neu-card-interactive w-full p-5 text-left md:p-6',
+                      active && 'ring-2 ring-[var(--neu-accent)] ring-offset-2 ring-offset-[var(--neu-bg)]',
                     )}
                   >
                     <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <p className="font-medium">{entry.title}</p>
-                        <p className="mt-1 font-mono text-xs text-[var(--ink-soft)]">
-                          {preset.vendor} · {mask(entry.values.apiKey ?? '')}
-                        </p>
+                      <div className="flex items-start gap-3">
+                        <div className="neu-well grid size-12 shrink-0 place-items-center">
+                          <span className="font-display text-xs font-bold text-[var(--neu-accent)]">
+                            {preset.name.slice(0, 2).toUpperCase()}
+                          </span>
+                        </div>
+                        <div>
+                          <p className="font-display text-lg font-bold tracking-tight">{entry.title}</p>
+                          <p className="mt-1 font-mono text-xs text-[var(--neu-muted)]">
+                            {preset.vendor} · {mask(entry.values.apiKey ?? '')}
+                          </p>
+                        </div>
                       </div>
-                      <span className="rounded bg-[var(--chip)] px-2 py-0.5 text-[10px] tracking-wide uppercase">
+                      <span className="neu-inset-sm rounded-full px-3 py-1 text-[10px] font-semibold tracking-wide text-[var(--neu-muted)] uppercase">
                         {preset.name}
                       </span>
                     </div>
                     {entry.tags.length > 0 && (
-                      <div className="mt-3 flex flex-wrap gap-1.5">
+                      <div className="mt-4 flex flex-wrap gap-2">
                         {entry.tags.map((tag) => (
                           <span
                             key={tag}
-                            className="rounded border border-[var(--line)] px-1.5 py-0.5 text-[10px] text-[var(--ink-soft)]"
+                            className="neu-inset-sm rounded-full px-2.5 py-1 text-[10px] text-[var(--neu-muted)]"
                           >
                             {tag}
                           </span>
@@ -304,9 +325,9 @@ export default function App() {
             )}
           </section>
 
-          <aside className="panel sticky top-4 h-fit min-h-72 p-5">
+          <aside className="neu-card h-fit min-h-72 p-6 md:sticky md:top-6 md:p-8">
             {!selected ? (
-              <div className="grid min-h-56 place-items-center text-center text-sm text-[var(--ink-soft)]">
+              <div className="grid min-h-56 place-items-center text-center text-sm text-[var(--neu-muted)]">
                 选择一条记录查看配置格式
               </div>
             ) : (
@@ -327,14 +348,16 @@ export default function App() {
           </aside>
         </div>
 
-        <footer className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-[var(--line)] pt-4 text-xs text-[var(--ink-soft)]">
-          <span className="inline-flex items-center gap-1.5">
-            <Shield className="size-3.5" />
+        <footer className="mt-10 flex flex-wrap items-center justify-between gap-3 border-t-0 pt-2 text-xs text-[var(--neu-muted)]">
+          <span className="inline-flex items-center gap-2">
+            <span className="neu-extruded-sm grid size-8 place-items-center rounded-xl">
+              <Shield className="size-3.5 text-[var(--neu-success)]" />
+            </span>
             {vault.encrypted ? 'AES-GCM 加密本地存储' : '明文本地存储（可重建并启用主密码）'}
           </span>
           <button
             type="button"
-            className="underline-offset-2 hover:underline"
+            className="underline-offset-2 hover:text-[var(--neu-danger)] hover:underline"
             onClick={() => {
               if (confirm('将清空本机全部 KeyLedger 数据，且不可恢复。继续？')) vault.wipe();
             }}
@@ -357,6 +380,16 @@ export default function App() {
           />
         )}
       </AnimatePresence>
+    </div>
+  );
+}
+
+function DecorBackdrop() {
+  return (
+    <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+      <div className="neu-decor neu-extruded top-[-80px] right-[-60px] size-56 opacity-70" />
+      <div className="neu-decor neu-inset-deep bottom-[12%] left-[-40px] size-40 opacity-60" />
+      <div className="neu-decor neu-extruded-sm top-[40%] right-[8%] size-24 opacity-50" />
     </div>
   );
 }
@@ -400,35 +433,45 @@ function GateScreen({
   };
 
   return (
-    <div className="app-shell grid min-h-dvh place-items-center px-4">
+    <div className="relative grid min-h-dvh place-items-center bg-[var(--neu-bg)] px-4">
+      <DecorBackdrop />
       <motion.div
-        initial={{ opacity: 0, y: 16 }}
+        initial={{ opacity: 0, y: 18 }}
         animate={{ opacity: 1, y: 0 }}
-        className="panel w-full max-w-md p-7"
+        transition={{ duration: 0.45, ease: 'easeOut' }}
+        className="neu-card relative z-10 w-full max-w-md p-8 md:p-10"
       >
-        <p className="font-display text-3xl">KeyLedger</p>
-        <p className="mt-2 text-sm text-[var(--ink-soft)]">
+        <div className="neu-well neu-float mx-auto mb-6 grid size-16 place-items-center">
+          <div className="neu-extruded-sm grid size-10 place-items-center rounded-xl text-[var(--neu-accent)]">
+            <KeyRound className="size-5" />
+          </div>
+        </div>
+        <h1 className="text-center font-display text-3xl font-extrabold tracking-tight">KeyLedger</h1>
+        <p className="mt-3 text-center text-sm leading-relaxed text-[var(--neu-muted)]">
           {mode === 'setup'
             ? '首次使用：可选设置主密码，密钥将 AES-GCM 加密后写入 localStorage。'
             : '保险库已锁定，输入主密码解锁。'}
         </p>
 
         {mode === 'setup' && (
-          <label className="mt-5 flex items-center gap-2 text-sm">
-            <input
-              type="checkbox"
-              checked={skipEncrypt}
-              onChange={(e) => setSkipEncrypt(e.target.checked)}
-            />
+          <label className="mt-6 flex items-center gap-3 text-sm text-[var(--neu-muted)]">
+            <span className="neu-inset-sm grid size-6 place-items-center rounded-lg">
+              <input
+                type="checkbox"
+                checked={skipEncrypt}
+                onChange={(e) => setSkipEncrypt(e.target.checked)}
+                className="size-3.5 accent-[var(--neu-accent)]"
+              />
+            </span>
             暂不加密（仅本机信任环境）
           </label>
         )}
 
         {(mode === 'unlock' || !skipEncrypt) && (
-          <div className="mt-4 space-y-3">
+          <div className="mt-5 space-y-3">
             <input
               type="password"
-              className="field w-full"
+              className="neu-field"
               placeholder="主密码"
               value={pass}
               onChange={(e) => setPass(e.target.value)}
@@ -439,7 +482,7 @@ function GateScreen({
             {mode === 'setup' && (
               <input
                 type="password"
-                className="field w-full"
+                className="neu-field"
                 placeholder="确认主密码"
                 value={pass2}
                 onChange={(e) => setPass2(e.target.value)}
@@ -452,12 +495,17 @@ function GateScreen({
         )}
 
         {(localError || error) && (
-          <p className="mt-3 text-sm text-[var(--danger)]">{localError || error}</p>
+          <p className="mt-3 text-sm text-[var(--neu-danger)]">{localError || error}</p>
         )}
 
-        <Button className="mt-5 h-10 w-full" disabled={busy} onClick={() => void submit()}>
+        <button
+          type="button"
+          className="neu-btn neu-btn-primary mt-6 w-full"
+          disabled={busy}
+          onClick={() => void submit()}
+        >
           {mode === 'setup' ? '进入 KeyLedger' : '解锁'}
-        </Button>
+        </button>
       </motion.div>
     </div>
   );
@@ -492,51 +540,50 @@ function DetailPane({
   const rendered = template ? renderTemplate(template.body, entry.values) : '';
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h2 className="font-display text-2xl">{entry.title}</h2>
-          <p className="mt-1 text-xs text-[var(--ink-soft)]">
+          <h2 className="font-display text-2xl font-extrabold tracking-tight md:text-3xl">
+            {entry.title}
+          </h2>
+          <p className="mt-1 text-xs text-[var(--neu-muted)]">
             {preset.name} · 更新于 {new Date(entry.updatedAt).toLocaleString()}
           </p>
         </div>
-        <div className="flex gap-1">
-          <Button variant="ghost" size="icon" onClick={onEdit} aria-label="编辑">
+        <div className="flex gap-2">
+          <button type="button" className="neu-btn neu-btn-icon" onClick={onEdit} aria-label="编辑">
             <Pencil className="size-4" />
-          </Button>
-          <Button variant="ghost" size="icon" onClick={onDelete} aria-label="删除">
+          </button>
+          <button type="button" className="neu-btn neu-btn-icon" onClick={onDelete} aria-label="删除">
             <Trash2 className="size-4" />
-          </Button>
+          </button>
         </div>
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-3">
         {preset.fields.map((field) => {
           const value = entry.values[field.key] ?? '';
           const display = field.secret && !revealSecrets ? mask(value) : value || '—';
           return (
-            <div
-              key={field.key}
-              className="flex items-center justify-between gap-3 rounded-lg border border-[var(--line)] bg-[var(--panel-strong)] px-3 py-2"
-            >
+            <div key={field.key} className="neu-well flex items-center justify-between gap-3 px-4 py-3">
               <div className="min-w-0">
-                <p className="text-[10px] tracking-wide text-[var(--ink-soft)] uppercase">
+                <p className="text-[10px] font-semibold tracking-wide text-[var(--neu-muted)] uppercase">
                   {field.label}
                 </p>
                 <p className="truncate font-mono text-sm">{display}</p>
               </div>
-              <Button
-                variant="ghost"
-                size="icon-sm"
+              <button
+                type="button"
+                className="neu-btn neu-btn-icon !size-11 !min-h-11"
                 onClick={() => void onCopy(value, `field-${field.key}`)}
                 aria-label="复制"
               >
                 {copied === `field-${field.key}` ? (
-                  <Check className="size-3.5" />
+                  <Check className="size-3.5 text-[var(--neu-success)]" />
                 ) : (
                   <Copy className="size-3.5" />
                 )}
-              </Button>
+              </button>
             </div>
           );
         })}
@@ -545,7 +592,7 @@ function DetailPane({
       <div className="flex items-center justify-between">
         <button
           type="button"
-          className="inline-flex items-center gap-1.5 text-xs text-[var(--ink-soft)] hover:text-[var(--ink)]"
+          className="inline-flex min-h-11 items-center gap-2 text-xs text-[var(--neu-muted)] hover:text-[var(--neu-fg)]"
           onClick={onToggleReveal}
         >
           {revealSecrets ? <EyeOff className="size-3.5" /> : <Eye className="size-3.5" />}
@@ -556,22 +603,22 @@ function DetailPane({
             href={preset.docsUrl}
             target="_blank"
             rel="noreferrer"
-            className="text-xs text-[var(--accent-ink)] underline-offset-2 hover:underline"
+            className="text-xs font-medium text-[var(--neu-accent)] underline-offset-2 hover:underline"
           >
             官方文档
           </a>
         )}
       </div>
 
-      {entry.notes && (
-        <p className="rounded-lg bg-[var(--chip)] px-3 py-2 text-sm leading-relaxed">{entry.notes}</p>
-      )}
+      {entry.notes && <p className="neu-well px-4 py-3 text-sm leading-relaxed">{entry.notes}</p>}
 
       <div>
-        <div className="mb-2 flex items-center justify-between gap-2">
-          <p className="text-xs tracking-wide text-[var(--ink-soft)] uppercase">配置格式</p>
+        <div className="mb-3 flex items-center justify-between gap-2">
+          <p className="text-xs font-semibold tracking-wide text-[var(--neu-muted)] uppercase">
+            配置格式
+          </p>
           <select
-            className="field h-8 py-1 text-xs"
+            className="neu-field !py-2 text-xs md:w-36"
             value={templateId}
             onChange={(e) => setTemplateId(e.target.value)}
           >
@@ -582,15 +629,15 @@ function DetailPane({
             ))}
           </select>
         </div>
-        <pre className="code-block relative whitespace-pre-wrap">{rendered}</pre>
-        <Button
-          variant="outline"
-          className="mt-2 h-9 gap-2"
+        <pre className="neu-code">{rendered}</pre>
+        <button
+          type="button"
+          className="neu-btn mt-3 w-full"
           onClick={() => void onCopy(rendered, 'template')}
         >
-          {copied === 'template' ? <Check className="size-4" /> : <Copy className="size-4" />}
+          {copied === 'template' ? <Check className="size-4 text-[var(--neu-success)]" /> : <Copy className="size-4" />}
           复制配置片段
-        </Button>
+        </button>
       </div>
     </div>
   );
@@ -611,31 +658,32 @@ function EditorModal({
 
   return (
     <motion.div
-      className="fixed inset-0 z-50 grid place-items-end bg-black/35 p-0 backdrop-blur-sm md:place-items-center md:p-6"
+      className="fixed inset-0 z-50 grid place-items-end bg-[rgb(61_72_82/0.28)] p-0 backdrop-blur-[2px] md:place-items-center md:p-6"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       onClick={onClose}
     >
       <motion.div
-        initial={{ opacity: 0, y: 24 }}
+        initial={{ opacity: 0, y: 28 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 16 }}
-        className="panel max-h-[92dvh] w-full max-w-xl overflow-y-auto rounded-t-2xl p-5 md:rounded-2xl md:p-6"
+        transition={{ duration: 0.3, ease: 'easeOut' }}
+        className="neu-card max-h-[92dvh] w-full max-w-xl overflow-y-auto rounded-t-[32px] p-6 md:rounded-[32px] md:p-8"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="mb-4 flex items-center justify-between">
-          <h3 className="font-display text-2xl">编辑记录</h3>
-          <Button variant="ghost" size="icon" onClick={onClose} aria-label="关闭">
+        <div className="mb-5 flex items-center justify-between">
+          <h3 className="font-display text-2xl font-extrabold tracking-tight">编辑记录</h3>
+          <button type="button" className="neu-btn neu-btn-icon" onClick={onClose} aria-label="关闭">
             <X className="size-4" />
-          </Button>
+          </button>
         </div>
 
-        <div className="space-y-3">
-          <label className="block space-y-1.5 text-sm">
-            <span>提供商</span>
+        <div className="space-y-4">
+          <label className="block space-y-2 text-sm">
+            <span className="text-[var(--neu-muted)]">提供商</span>
             <select
-              className="field w-full"
+              className="neu-field"
               value={entry.providerId}
               onChange={(e) => {
                 const providerId = e.target.value as AiProviderId;
@@ -654,21 +702,21 @@ function EditorModal({
             </select>
           </label>
 
-          <label className="block space-y-1.5 text-sm">
-            <span>标题</span>
+          <label className="block space-y-2 text-sm">
+            <span className="text-[var(--neu-muted)]">标题</span>
             <input
-              className="field w-full"
+              className="neu-field"
               value={entry.title}
               onChange={(e) => onChange({ ...entry, title: e.target.value })}
             />
           </label>
 
           {preset.fields.map((field) => (
-            <label key={field.key} className="block space-y-1.5 text-sm">
-              <span>{field.label}</span>
+            <label key={field.key} className="block space-y-2 text-sm">
+              <span className="text-[var(--neu-muted)]">{field.label}</span>
               {field.multiline ? (
                 <textarea
-                  className="field min-h-24 w-full"
+                  className="neu-field min-h-24"
                   placeholder={field.placeholder}
                   value={entry.values[field.key] ?? ''}
                   onChange={(e) =>
@@ -680,7 +728,7 @@ function EditorModal({
                 />
               ) : (
                 <input
-                  className="field w-full"
+                  className="neu-field"
                   type={field.secret ? 'password' : 'text'}
                   placeholder={field.placeholder}
                   value={entry.values[field.key] ?? ''}
@@ -695,10 +743,10 @@ function EditorModal({
             </label>
           ))}
 
-          <label className="block space-y-1.5 text-sm">
-            <span>标签（逗号分隔）</span>
+          <label className="block space-y-2 text-sm">
+            <span className="text-[var(--neu-muted)]">标签（逗号分隔）</span>
             <input
-              className="field w-full"
+              className="neu-field"
               placeholder="生产, 代理, 备用"
               value={entry.tags.join(', ')}
               onChange={(e) =>
@@ -710,21 +758,23 @@ function EditorModal({
             />
           </label>
 
-          <label className="block space-y-1.5 text-sm">
-            <span>备注</span>
+          <label className="block space-y-2 text-sm">
+            <span className="text-[var(--neu-muted)]">备注</span>
             <textarea
-              className="field min-h-20 w-full"
+              className="neu-field min-h-20"
               value={entry.notes}
               onChange={(e) => onChange({ ...entry, notes: e.target.value })}
             />
           </label>
         </div>
 
-        <div className="mt-5 flex justify-end gap-2">
-          <Button variant="outline" onClick={onClose}>
+        <div className="mt-6 flex justify-end gap-3">
+          <button type="button" className="neu-btn" onClick={onClose}>
             取消
-          </Button>
-          <Button onClick={onSave}>保存</Button>
+          </button>
+          <button type="button" className="neu-btn neu-btn-primary" onClick={onSave}>
+            保存
+          </button>
         </div>
       </motion.div>
     </motion.div>

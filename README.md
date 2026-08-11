@@ -17,7 +17,11 @@ npm install
 npm run dev
 ```
 
-打开 http://localhost:5188
+在**你自己的电脑**终端执行后打开：
+
+http://localhost:5188
+
+> 注意：云端 Agent / CI 环境里的 `localhost` 无法从你本机浏览器直接访问。请 pull 代码后在本地启动。
 
 ## 构建
 

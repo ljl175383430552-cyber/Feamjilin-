@@ -4,8 +4,8 @@
   "description": "本地记录各 AI 工具的 API Key 与配置格式",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#e7f1ee",
-  "theme_color": "#0f8a72",
+  "background_color": "#E0E5EC",
+  "theme_color": "#E0E5EC",
   "icons": [
     {
       "src": "/favicon.svg",
