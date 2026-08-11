@@ -17,7 +17,7 @@ npm install
 npm run dev
 ```
 
-打开 http://localhost:3000
+打开 http://localhost:5188
 
 ## 构建
 

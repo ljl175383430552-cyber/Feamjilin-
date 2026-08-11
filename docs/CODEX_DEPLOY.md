@@ -13,7 +13,7 @@
 - 技术栈：Vite + React + TypeScript + Tailwind
 - 类型：纯前端静态站；密钥只存浏览器 localStorage（可选 AES-GCM）
 - 无后端、无数据库、不需要 GEMINI_API_KEY
-- 本地开发：npm install && npm run dev（端口 3000）
+- 本地开发：npm install && npm run dev（端口 5188）
 - 生产构建：npm run build → 产出 dist/
 
 ## 执行步骤
